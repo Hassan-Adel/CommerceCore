@@ -1,0 +1,27 @@
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Register</mat-card-title>
+        <mat-card-subtitle>subtitle</mat-card-subtitle>
+    </mat-card-header>
+    <form [formGroup]="form" (ngSubmit)="register()">
+        <mat-card-content>
+            
+                <mat-form-field class="fullWidth">
+                    <input formControlName="email" type="email" name="Email" matInput placeholder="Email" >
+                </mat-form-field>
+
+                <mat-form-field class="fullWidth">
+                        <input formControlName="password" type="password" name="Password" matInput placeholder="Passwod" >
+                </mat-form-field>
+
+                <mat-form-field class="fullWidth">
+                        <input formControlName="confirmPassword" type="password" name="Confirm Password" matInput placeholder="Confirm Passwod" >
+                </mat-form-field>
+            
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-raised-button color="primary" [disabled]="!form.valid" >register</button>
+        </mat-card-actions>
+    </form>
+</mat-card>
