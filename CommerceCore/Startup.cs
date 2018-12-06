@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
+using CommerceCore.Models;
 
 namespace CommerceCore
 {
@@ -26,13 +28,29 @@ namespace CommerceCore
             var DefaultConnection2 = "Server = (localdb)\\mssqllocaldb; Database = CommerceUserDB; Trusted_Connection = True; MultipleActiveResultSets = true";
             services.AddDbContext<UserDBContext>(options => options.UseSqlServer(DefaultConnection2));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options => {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 4;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-            }).AddEntityFrameworkStores<UserDBContext>();
+            //services.AddIdentity<IdentityUser, IdentityRole>(options => {
+            //    options.Password.RequireDigit = false;
+            //    options.Password.RequiredLength = 4;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireUppercase = false;
+            //    options.Password.RequireLowercase = false;
+            //}).AddEntityFrameworkStores<UserDBContext>();
+
+            
+            var builder = services.AddIdentityCore<AppUser>(o =>
+            {
+                // configure identity options
+                o.Password.RequireDigit = false;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 6;
+            });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddEntityFrameworkStores<UserDBContext>().AddDefaultTokenProviders();
+
+
+            services.AddAutoMapper();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
