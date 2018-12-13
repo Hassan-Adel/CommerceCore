@@ -32,6 +32,7 @@ namespace CommerceCore
             var DefaultConnection2 = "Server = (localdb)\\mssqllocaldb; Database = CommerceUserDB; Trusted_Connection = True; MultipleActiveResultSets = true";
             services.AddDbContext<UserDBContext>(options => options.UseSqlServer(DefaultConnection2));
 
+            // Get options from app settings
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 
             // Configure JwtIssuerOptions
