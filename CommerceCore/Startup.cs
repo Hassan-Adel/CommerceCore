@@ -28,6 +28,16 @@ namespace CommerceCore
             var DefaultConnection2 = "Server = (localdb)\\mssqllocaldb; Database = CommerceUserDB; Trusted_Connection = True; MultipleActiveResultSets = true";
             services.AddDbContext<UserDBContext>(options => options.UseSqlServer(DefaultConnection2));
 
+            var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
+
+            // Configure JwtIssuerOptions
+            services.Configure<JwtIssuerOptions>(options =>
+            {
+                options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+                options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
+                options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
+            });
+
             //services.AddIdentity<IdentityUser, IdentityRole>(options => {
             //    options.Password.RequireDigit = false;
             //    options.Password.RequiredLength = 4;
@@ -36,7 +46,7 @@ namespace CommerceCore
             //    options.Password.RequireLowercase = false;
             //}).AddEntityFrameworkStores<UserDBContext>();
 
-            
+
             var builder = services.AddIdentityCore<AppUser>(o =>
             {
                 // configure identity options
