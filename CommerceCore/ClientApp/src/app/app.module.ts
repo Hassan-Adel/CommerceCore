@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from './app-material.module';
 //services
-import { BaseService } from "./services/base.service";
 import { ConfigService } from './shared/utils/config.service';
 import { CustomValidatorService } from './shared/custom-validators';
 import { AuthenticationService } from './services/authentication.service'
@@ -38,7 +37,7 @@ import { LoginComponent } from './account/login.component';
     BrowserAnimationsModule,
     AppMaterialModule
   ],
-  providers: [BaseService, ConfigService, CustomValidatorService, AuthenticationService],
+  providers: [ConfigService, CustomValidatorService, AuthenticationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
