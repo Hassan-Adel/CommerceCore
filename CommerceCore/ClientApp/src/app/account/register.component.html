@@ -21,7 +21,8 @@
             
         </mat-card-content>
         <mat-card-actions>
-            <button mat-raised-button color="primary" [disabled]="!form.valid" >register</button>
+          <button mat-raised-button color="primary" [disabled]="!form.valid || isRequesting">register</button>
+          <app-spinner [isRunning]="isRequesting"></app-spinner>
         </mat-card-actions>
     </form>
 </mat-card>
