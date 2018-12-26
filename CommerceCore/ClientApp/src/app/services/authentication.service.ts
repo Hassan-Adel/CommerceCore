@@ -1,10 +1,34 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
+import { UserRegistration } from '../shared/models/user.registration.interface';
+import { ConfigService } from '../shared/utils/config.service';
+import { BaseService } from "./base.service";
+import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject } from 'rxjs/Rx'; 
+// Add the RxJS Observable operators we need in this app.
+import '../rxjs-operators';
+
 @Injectable()
-export class AuthenticationService {
-  constructor(private http: HttpClient, private router: Router, @Inject('BASE_URL') private baseUrl: string) {
+export class AuthenticationService extends BaseService {
+  baseUrl: string = '';
+
+  // Observable navItem source
+  private _authNavStatusSource = new BehaviorSubject<boolean>(false);
+  // Observable navItem stream
+  authNavStatus$ = this._authNavStatusSource.asObservable();
+
+  private loggedIn = false;
+  //constructor(private http: HttpClient, private router: Router, @Inject('BASE_URL') private baseUrl: string) {
+  //}
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    super();
+    this.loggedIn = !!localStorage.getItem('auth_token');
+    // ?? not sure if this the best way to broadcast the status but seems to resolve issue on page refresh where auth status is lost in
+    // header component resulting in authed user nav links disappearing despite the fact user is still logged in
+    this._authNavStatusSource.next(this.loggedIn);
+    this.baseUrl = configService.getApiURI();
   }
     
     //If we add an exclamation mark in front, it will give us true if it doesn't exist and if add another, it'll give us true if it does exist since it's a double negative.
@@ -12,24 +36,37 @@ export class AuthenticationService {
         return !!localStorage.getItem('token');
     }
 
-    register(credentials){
-      this.http.post<any>(this.baseUrl + 'api/account', credentials).subscribe(res => {
-            this.authenticate(res);
-        });
-    }
+  register(credentials): Observable<UserRegistration> {
+    debugger;
+    var email = credentials.email;
+    var password = credentials.password;
+    var firstName = "firstName";
+    var lastName = "lastName";
+    var location = "location";
 
-    login(credentials){
-      this.http.post<any>(this.baseUrl + 'api/account/login', credentials).subscribe(res => {
-            this.authenticate(res);
-        });
-    }
+    let body = JSON.stringify({ email, password, firstName, lastName, location });
+    //let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    //let options = new RequestOptions({ headers: headers });
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    
+    return this.http.post(this.baseUrl + "/account", body, httpOptions)
+      .map(res => true)
+      .catch(this.handleError);
+  }
+
+  //login(credentials) {
+  //  var userName = credentials.email;
+  //  var password = credentials.password;
+  //  this.http.post<any>(this.baseUrl + 'api/auth/login', JSON.stringify({ userName, password })).subscribe(res => {
+  //          this.authenticate(res);
+  //      });
+  //  }
 
     logout(){
         localStorage.removeItem('token');
-    }
-
-    authenticate(res){
-        localStorage.setItem('token', res);
-        this.router.navigate(['/']);
     }
 }
