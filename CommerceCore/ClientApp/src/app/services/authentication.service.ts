@@ -22,7 +22,7 @@ export class AuthenticationService extends BaseService {
   private loggedIn = false;
   //constructor(private http: HttpClient, private router: Router, @Inject('BASE_URL') private baseUrl: string) {
   //}
-  constructor(private http: HttpClient, private configService: ConfigService) {
+  constructor(private http: HttpClient, private configService: ConfigService, private router: Router) {
     super();
     this.loggedIn = !!localStorage.getItem('auth_token');
     // ?? not sure if this the best way to broadcast the status but seems to resolve issue on page refresh where auth status is lost in
@@ -50,23 +50,44 @@ export class AuthenticationService extends BaseService {
     let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
-      })
-    };
+      })};
     
     return this.http.post(this.baseUrl + "/account", body, httpOptions)
       .map(res => true)
       .catch(this.handleError);
   }
 
-  //login(credentials) {
-  //  var userName = credentials.email;
-  //  var password = credentials.password;
-  //  this.http.post<any>(this.baseUrl + 'api/auth/login', JSON.stringify({ userName, password })).subscribe(res => {
-  //          this.authenticate(res);
-  //      });
-  //  }
+  login(credentials): Observable<UserRegistration> {
+    var userName = credentials.email;
+    var password = credentials.password;
+    let body = JSON.stringify({ userName, password });
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })};
+
+    return this.http.post<any>(this.baseUrl + '/auth/login', body, httpOptions)
+      .map(res => {
+        localStorage.setItem('auth_token', res.auth_token);
+        this.loggedIn = true;
+        this._authNavStatusSource.next(true);
+        return true;
+      })
+      .catch(this.handleError);
+    }
 
     logout(){
         localStorage.removeItem('token');
-    }
+  }
+
+  isLoggedIn() {
+    return this.loggedIn;
+  }
+
+  authenticate(res) {
+    localStorage.setItem('token', res);
+    //this.router.navigate(['/home']);
+  }
+
+
 }
