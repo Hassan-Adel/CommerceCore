@@ -85,20 +85,20 @@ export class AuthenticationService extends BaseService {
   }
 
   facebookLogin(accessToken: string) {
+    debugger;
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     let body = JSON.stringify({ accessToken });
     return this.http
       .post(
         this.baseUrl + '/externalauth/facebook', body, { headers })
-      //.map(res => res.json())
-      //.map(res => {
-      //  localStorage.setItem('auth_token', res.auth_token);
-      //  this.loggedIn = true;
-      //  this._authNavStatusSource.next(true);
-      //  return true;
-      //})
-      //.catch(this.handleError);
+      .map((res: any) => {
+        localStorage.setItem('auth_token', res.auth_token);
+        this.loggedIn = true;
+        this._authNavStatusSource.next(true);
+        return true;
+      })
+      .catch(this.handleError);
   }
 
   authenticate(res) {
