@@ -10,7 +10,7 @@
 <body>
   <script>
       // if we don't receive an access token then login failed and/or the user has not connected properly
-      var accessToken = getParameterByName("access_token");
+    var accessToken = getParameterByName("access_token");
       var message = {};
       if (accessToken) {
         message.status = true;
@@ -21,8 +21,9 @@
         message.status = false;
         message.error = getParameterByName("error");
         message.errorDescription = getParameterByName("error_description");
-      }
-      window.opener.postMessage(JSON.stringify(message), "http://localhost:5000");
+    } 
+      //window.opener.postMessage(JSON.stringify(message), "http://localhost:5000");
+    window.opener.postMessage(JSON.stringify(message), "https://localhost:44368");
   </script>
 </body>
 </html>
