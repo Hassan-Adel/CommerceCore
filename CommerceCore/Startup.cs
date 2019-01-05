@@ -43,7 +43,7 @@ namespace CommerceCore
             services.AddSingleton<IJwtFactory, JwtFactory>();
 
             // Register the ConfigurationBuilder instance of FacebookAuthSettings
-            //services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
+            services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings))); ;
 
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
